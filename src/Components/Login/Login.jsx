@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import api from '../../service/api.js'
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
+import InputField from '../Inputs/InputField.jsx';
 
 function Login() {
   const[remember,setRemember]=useState(false)
@@ -9,8 +10,8 @@ function Login() {
   const {register,reset,handleSubmit,formState:{errors,isValid}}=useForm({
     mode:"onBlur",
     criteriaMode:"all",
+    
   })
-  
   async function onSubmit(data){
     try{
       const response=await api.post('users/signIn',data)
@@ -20,7 +21,7 @@ function Login() {
       else{
         sessionStorage.setItem('token',response.data.token)
       }
-      navigate('/todo-list',{state:response.data.token})
+      navigate('/todo-list')
       
     }
     catch(err){
@@ -36,45 +37,40 @@ function Login() {
         <h2 className="text-center text-2xl font-semibold mb-6">Login</h2>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              {...register("email", {
-                required: "Email is required",
-                minLength: {
-                  value: 3,
-                  message: "Email must be at least 3 characters long",
-                },
-                pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "Invalid email format",
-                }
-              })}
-              className="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-          </div>
+        <InputField
+            name="email"
+            label="Email"
+            type="email"
+            register={register}
+            errors={errors}
+            validationRules={{
+              required: "Email is required",
+              minLength: {
+                value: 3,
+                message: "Email must be at least 3 characters long",
+              },
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Invalid email format",
+              },
+            }}
+          />
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 5,
-                  message: "Password must be at least 5 characters long",
-                }
-              })}
-              className="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-          </div>
+<InputField
+            name="password"
+            label="Password"
+            type="password"
+            register={register}
+            errors={errors}
+            validationRules={{
+              required: "Password is required",
+              minLength: {
+                value: 5,
+                message: "Password must be at least 5 characters long",
+              },
+            }}
+          />
+
 
           <div>
             <button
@@ -88,7 +84,7 @@ function Login() {
           </div>
         </form>
         <div className='flex gap-2'>
-          <input type="checkbox" value={remember} checked={remember} onChange={()=>{setRemember(!remember)}}/>
+          <input type="checkbox" value={remember}  checked={remember} onChange={()=>{setRemember(!remember)}}/>
           <p>remember me</p>
         </div>
         <Link to='/registration'>Do you want to register?</Link>

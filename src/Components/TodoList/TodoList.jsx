@@ -6,24 +6,28 @@ import { useLocation, useNavigate } from 'react-router-dom'
 function TodoList() {
   const location=useLocation()
   const navigate=useNavigate()
-const[change,setChange]=useState(false)
-  useEffect(()=>{
-    const fetchTasks=async()=>{
-      try {
-        const response=await api.post('tasks/all',{},{
-          headers: {
-            'Authorization': `Bearer ${location.state}` 
-          }
-        })
-        setState(response.data)
-      } catch (error) {
-        if(error.status===401){
-            navigate("/")
+  const[change,setChange]=useState(false)
+  useEffect(() => {
+    const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+    if (!token) {
+      navigate("/"); 
+    } else {
+      fetchTasks(token);
+    }
+  }, [change]);
+  const fetchTasks = async (token) => {
+    try {
+      const response = await api.get('tasks/all', {
+        headers: {
+          Authorization: `Bearer ${token}`, 
         }
-      }
-     }
-      fetchTasks()
-  },[change])
+      });
+      setState(response.data);
+    } catch (error) {
+      console.log(error);
+      navigate("/"); 
+    }
+  };
     const [state,setState]=useState([])
     const {register,watch,handleSubmit,reset,formState:{errors}}=useForm({
         mode:"onBlur"

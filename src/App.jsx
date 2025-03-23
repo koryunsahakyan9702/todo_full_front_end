@@ -1,12 +1,10 @@
 
 import './App.css'
-import { Link, Route, Routes,Navigate } from 'react-router-dom'
+import { Link, Route, Routes } from 'react-router-dom'
 import Login from './Components/Login/Login.jsx'
 import Registration from './Components/Registration/Registration'
 import TodoList from './Components/TodoList/TodoList.jsx'
-import { IoLogOutOutline } from "react-icons/io5";
 
-import { useEffect, useState } from 'react'
 import Home from './Components/Home/Home.jsx'
 function App() {
 
